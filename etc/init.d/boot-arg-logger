@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+
+start() {
+    einfo "starting kernel boot argument logger"
+
+    eindent
+
+    BOOT_ARGS=$(cat /proc/cmdline)
+    einfo "Kernel boot args were: $BOOT_ARGS"
+
+    eoutdent
+
+
+    return 0
+}
+
+stop() {
+    einfo 'stopping kernel boot argument logger service…'
+    return 0
+}
