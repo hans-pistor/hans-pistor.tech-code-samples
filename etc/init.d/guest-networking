@@ -1,0 +1,42 @@
+#!/sbin/openrc-run
+#!/sbin/openrc-run
+start() {
+    einfo "Setting up guest internet"
+    eindent
+
+    einfo "Parsing cmdline $(cat /proc/cmdline)"
+    local ip=$(cat /proc/cmdline | sed -n 's/.*IP_ADDRESS::\([^ ]\+\).*/\1/p')
+    local iface=$(cat /proc/cmdline | sed -n 's/.*IFACE::\([^ ]\+\).*/\1/p')
+    local gateway=$(cat /proc/cmdline | sed -n 's/.*GATEWAY::\([^ ]\+\).*/\1/p')
+
+    if [ -z "$ip" ]; then
+        eerror "No IP address found in kernel command line"
+        eoutdent
+        return 1
+    fi
+
+    if [ -z "$iface" ]; then
+        eerror "No interface found in kernel command line"
+        eoutdent
+        return 1
+    fi
+
+    if [ -z "$gateway" ]; then
+        eerror "No gateway found in kernel command line"
+        eoutdent
+        return 1
+    fi
+
+    einfo "Setting up ip routing for $iface with ip $ip and gateway $gateway"
+
+    ip addr add $ip/24 dev $iface
+    ip link set $iface up
+    ip route add default via $gateway dev $iface
+
+    eoutdent
+    return 0
+}
+
+stop() {
+    return 0
+}

@@ -28,4 +28,5 @@ RUN rc-update add devfs boot \
 COPY root /root
 COPY etc /etc
 
-RUN rc-update add boot-arg-logger
+RUN rc-update add boot-arg-logger \
+    && rc-update add guest-networking
